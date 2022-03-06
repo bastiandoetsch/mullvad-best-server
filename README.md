@@ -1,5 +1,6 @@
 # mullvad-best-server
 ![Build](https://github.com/bastiandoetsch/mullvad-best-server/actions/workflows/go.yml/badge.svg)
+
 Determines the mullvat.net wireguard server with the lowest latency. 
 
 ## Installation
