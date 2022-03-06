@@ -19,10 +19,11 @@ var pings = make(map[string]time.Duration)
 func main() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	var outputFlag = flag.String("o", "short", "Output format. 'json' outputs server json")
+	var countryFlag = flag.String("c", "ch", "Server country code, e.g. ch for Switzerland")
 	flag.Parse()
 
 	servers := getServers()
-	bestIndex := selectBestServerIndex(servers)
+	bestIndex := selectBestServerIndex(servers, countryFlag)
 	log.Debug().Interface("server", servers[bestIndex]).Msg("Best latency server found.")
 	hostname := strings.Split(servers[bestIndex].Hostname, "-")[0]
 	if *outputFlag != "json" {
@@ -36,19 +37,23 @@ func main() {
 	}
 }
 
-func selectBestServerIndex(servers []server) int {
+func selectBestServerIndex(servers []server, country *string) int {
 	best := servers[0].Hostname
-	bestIndex := 0
+	bestIndex := -1
 	allowedCountries := map[string]string{}
-	allowedCountries["de"] = "1"
-	allowedCountries["ch"] = "1"
-	allowedCountries["at"] = "1"
+	if *country == "" {
+		allowedCountries["de"] = "1"
+		allowedCountries["ch"] = "1"
+		allowedCountries["at"] = "1"
+	} else {
+		allowedCountries[*country] = "1"
+	}
 	for i, server := range servers {
 		if server.Active && allowedCountries[server.CountryCode] != "" {
 			duration, err := serverLatency(server)
 			if err == nil {
 				pings[server.Hostname] = duration
-				if best == "" || pings[best] > pings[server.Hostname] {
+				if bestIndex == -1 || pings[best] > pings[server.Hostname] {
 					best = server.Hostname
 					bestIndex = i
 				}
