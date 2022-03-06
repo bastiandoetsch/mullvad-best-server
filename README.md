@@ -30,3 +30,15 @@ The `-c` flag allows to give a country code. Else `ch` will be used.
 ## Background
 The program uses `https://api.mullvad.net/www/relays/<SERVER_TYPE/` to get the current server list, pings the ones with the right country
 and outputs the server with the lowest ping.
+
+## Integration into a script
+I use it on my router like this (yes, I know I could have done the whole thing with jq and shell scripting, but wanted to use go for maintainability).
+```
+#!/bin/sh
+set -e
+LATEST_RELEASE=$(curl -sSL https://api.github.com/repos/bastiandoetsch/mullvad-best-server/releases/latest | jq -r '.assets[]| .browser_download_url' | grep Linux_arm64)
+curl -sSL $LATEST_RELEASE > /root/mullvad-best-server
+chmod +x /root/mullvad-best-server
+/usr/bin/wg-quick down $(wg show|grep interface | cut -d: -f2)  || echo "nothing to shut down"
+/usr/bin/wg-quick up "mullvad-$(/root/mullvad-best-server -c de)"
+```
