@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -19,7 +20,8 @@ func main() {
 	servers := getServers()
 	bestIndex := selectBestServerIndex(servers)
 	log.Debug().Interface("server", servers[bestIndex]).Msg("Best latency server found.")
-	fmt.Println(servers[bestIndex].Hostname)
+	hostname := strings.Split(servers[bestIndex].Hostname, "-")[0]
+	fmt.Println(hostname)
 }
 
 func selectBestServerIndex(servers []server) int {
