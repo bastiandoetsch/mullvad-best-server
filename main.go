@@ -18,18 +18,20 @@ var pings = make(map[string]time.Duration)
 
 func main() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	var outputFlag = flag.String("o", "short", "Output format. 'json' outputs server json")
+	var outputFlag = flag.String("o", "", "Output format. 'json' outputs server json")
 	var countryFlag = flag.String("c", "ch", "Server country code, e.g. ch for Switzerland")
+	var typeFlag = flag.String("t", "wireguard", "Server type, e.g. wireguard")
 	flag.Parse()
 
-	servers := getServers()
+	servers := getServers(*typeFlag)
 	bestIndex := selectBestServerIndex(servers, countryFlag)
-	log.Debug().Interface("server", servers[bestIndex]).Msg("Best latency server found.")
-	hostname := strings.Split(servers[bestIndex].Hostname, "-")[0]
+	best := servers[bestIndex]
+	log.Debug().Interface("server", best).Msg("Best latency server found.")
+	hostname := strings.TrimSuffix(best.Hostname, "-wireguard")
 	if *outputFlag != "json" {
 		fmt.Println(hostname)
 	} else {
-		serverJson, err := json.Marshal(servers[bestIndex])
+		serverJson, err := json.Marshal(best)
 		if err != nil {
 			log.Fatal().Err(err)
 		}
@@ -63,8 +65,8 @@ func selectBestServerIndex(servers []server, country *string) int {
 	return bestIndex
 }
 
-func getServers() []server {
-	resp, err := http.Get("https://api.mullvad.net/www/relays/wireguard/")
+func getServers(serverType string) []server {
+	resp, err := http.Get("https://api.mullvad.net/www/relays/" + serverType + "/")
 	if err != nil {
 		log.Fatal().Err(err)
 	}

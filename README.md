@@ -11,11 +11,21 @@ Download binary from releases for your platform and unpack.
 ### Default usage
 Execute `mullvad-best-server`. It outputs the code, e.g. `de05`. You can then connect to it with e.g. wireguard using the normal shell scripts.
 
-### Extended Output
-If you want the full server information, execute `mullvad-best-server -o json`. It returns the full json output  of the server information.
+### Command line parameters
 
-### Specify Country
-The -c flag allows to give a country code. Else de/at/ch will be used.
+```angular2html
+Usage of dist/mullvad-best-server_darwin_amd64/mullvad-best-server:
+-c string
+  Server country code, e.g. ch for Switzerland (default "ch")
+-o string
+  Output format. 'json' outputs server json
+-t string
+  Server type, e.g. wireguard (default "wireguard")
+```
+
+If you want the full server information, execute `mullvad-best-server -o json`. It returns the full json output  of the server information.
+The `-c` flag allows to give a country code. Else `ch` will be used.
+
 
 ## Background
 The program uses `https://api.mullvad.net/www/relays/wireguard/` to get the current server list, pings the ones with the right country
