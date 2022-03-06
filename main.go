@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/go-ping/ping"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"io"
 	"io/ioutil"
@@ -13,10 +15,11 @@ import (
 var pings = make(map[string]time.Duration)
 
 func main() {
-
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	servers := getServers()
 	bestIndex := selectBestServerIndex(servers)
-	log.Info().Interface("best", servers[bestIndex]).Msg("Best Latency Server found.")
+	log.Debug().Interface("server", servers[bestIndex]).Msg("Best latency server found.")
+	fmt.Println(servers[bestIndex].Hostname)
 }
 
 func selectBestServerIndex(servers []server) int {
@@ -69,7 +72,7 @@ func serverLatency(s server) (time.Duration, error) {
 	}
 	var duration time.Duration
 	pinger.OnRecv = func(pkt *ping.Packet) {
-		log.Info().Str("Server", s.Hostname).IPAddr("IP", pkt.IPAddr.IP).Dur("RTT", pkt.Rtt).Msg("Added server latency.")
+		log.Debug().Str("Server", s.Hostname).IPAddr("IP", pkt.IPAddr.IP).Dur("RTT", pkt.Rtt).Msg("Added server latency.")
 		duration = pkt.Rtt
 	}
 	err = pinger.Run()
