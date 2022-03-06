@@ -24,7 +24,7 @@ func main() {
 	flag.Parse()
 
 	servers := getServers(*typeFlag)
-	bestIndex := selectBestServerIndex(servers, countryFlag)
+	bestIndex := selectBestServerIndex(servers, *countryFlag)
 	best := servers[bestIndex]
 	log.Debug().Interface("server", best).Msg("Best latency server found.")
 	hostname := strings.TrimSuffix(best.Hostname, "-wireguard")
@@ -39,19 +39,11 @@ func main() {
 	}
 }
 
-func selectBestServerIndex(servers []server, country *string) int {
+func selectBestServerIndex(servers []server, country string) int {
 	best := servers[0].Hostname
 	bestIndex := -1
-	allowedCountries := map[string]string{}
-	if *country == "" {
-		allowedCountries["de"] = "1"
-		allowedCountries["ch"] = "1"
-		allowedCountries["at"] = "1"
-	} else {
-		allowedCountries[*country] = "1"
-	}
 	for i, server := range servers {
-		if server.Active && allowedCountries[server.CountryCode] != "" {
+		if server.Active && server.CountryCode == country {
 			duration, err := serverLatency(server)
 			if err == nil {
 				pings[server.Hostname] = duration
