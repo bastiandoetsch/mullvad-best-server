@@ -1,5 +1,5 @@
 # mullvad-best-server
-Determines the mullvat.net server with the lowest latency. 
+Determines the mullvat.net wireguard server with the lowest latency. 
 
 ## Installation
 

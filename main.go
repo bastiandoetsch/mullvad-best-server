@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/go-ping/ping"
 	"github.com/rs/zerolog"
@@ -17,11 +18,22 @@ var pings = make(map[string]time.Duration)
 
 func main() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	var outputFlag = flag.String("o", "short", "Output format. 'json' outputs server json")
+	flag.Parse()
+
 	servers := getServers()
 	bestIndex := selectBestServerIndex(servers)
 	log.Debug().Interface("server", servers[bestIndex]).Msg("Best latency server found.")
 	hostname := strings.Split(servers[bestIndex].Hostname, "-")[0]
-	fmt.Println(hostname)
+	if *outputFlag != "json" {
+		fmt.Println(hostname)
+	} else {
+		serverJson, err := json.Marshal(servers[bestIndex])
+		if err != nil {
+			log.Fatal().Err(err)
+		}
+		fmt.Println(string(serverJson))
+	}
 }
 
 func selectBestServerIndex(servers []server) int {
