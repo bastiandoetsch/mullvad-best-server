@@ -19,6 +19,10 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+    - name: Lint source code
+      run: |
+        make tools lint
       
     - name: Create release tag
       run: |
