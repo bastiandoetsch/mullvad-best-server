@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/go-ping/ping"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/go-ping/ping"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
@@ -66,6 +67,9 @@ func getServers(serverType string) []server {
 			log.Err(err)
 		}
 	}(resp.Body)
+	if err != nil {
+		log.Fatal().Err(err)
+	}
 	var servers []server
 	err = json.Unmarshal(responseBody, &servers)
 	if err != nil {

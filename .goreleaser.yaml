@@ -5,6 +5,8 @@ before:
     - go mod tidy
 
 builds:
+  - flags:
+    - -trimpath
   - env:
       - CGO_ENABLED=0
     goos:
@@ -12,8 +14,6 @@ builds:
       - windows
       - darwin
     mod_timestamp: "{{ .CommitTimestamp }}"
-    ldflags:
-      - -s -w
 
 archives:
   - replacements:
