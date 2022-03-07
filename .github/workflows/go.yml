@@ -23,7 +23,8 @@ jobs:
     - name: Lint source code
       run: |
         make tools lint
-      
+        rm -rf .bin
+
     - name: Create release tag
       run: |
         git tag "v$(git show -s --format=%cd --date=format:%Y%m%d.%H%M%S)"
