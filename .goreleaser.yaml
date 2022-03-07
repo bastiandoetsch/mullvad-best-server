@@ -7,7 +7,7 @@ before:
 builds:
   - flags:
     - -trimpath
-  - env:
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
