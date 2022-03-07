@@ -14,8 +14,6 @@ import (
 	"time"
 )
 
-var pings = make(map[string]time.Duration)
-
 func main() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	var outputFlag = flag.String("o", "", "Output format. 'json' outputs server json")
@@ -40,16 +38,15 @@ func main() {
 }
 
 func selectBestServerIndex(servers []server, country string) int {
-	best := servers[0].Hostname
 	bestIndex := -1
+	var bestPing time.Duration
 	for i, server := range servers {
 		if server.Active && server.CountryCode == country {
 			duration, err := serverLatency(server)
 			if err == nil {
-				pings[server.Hostname] = duration
-				if bestIndex == -1 || pings[best] > pings[server.Hostname] {
-					best = server.Hostname
+				if bestIndex == -1 || bestPing > duration {
 					bestIndex = i
+					bestPing = duration
 				}
 			}
 		}
