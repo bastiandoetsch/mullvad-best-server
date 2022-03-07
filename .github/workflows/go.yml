@@ -23,7 +23,8 @@ jobs:
     - name: Lint source code
       run: |
         make tools lint
-        rm -rf .bin
+        rm -rf .bin/
+        rm -rf dist/
 
     - name: Create release tag
       run: |
