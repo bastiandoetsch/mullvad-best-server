@@ -16,12 +16,17 @@ import (
 )
 
 func main() {
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	var outputFlag = flag.String("o", "", "Output format. 'json' outputs server json")
 	var countryFlag = flag.String("c", "ch", "Server country code, e.g. ch for Switzerland")
 	var typeFlag = flag.String("t", "wireguard", "Server type, e.g. wireguard")
+	var logLevel = flag.String("l", "info", "Log level. Allowed values: trace, debug, info, warn, error, fatal, panic")
 	flag.Parse()
 
+	level, err := zerolog.ParseLevel(*logLevel)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Unable to set log level")
+	}
+	zerolog.SetGlobalLevel(level)
 	servers := getServers(*typeFlag)
 	bestIndex := selectBestServerIndex(servers, *countryFlag)
 	best := servers[bestIndex]
