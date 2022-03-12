@@ -29,6 +29,9 @@ func main() {
 	zerolog.SetGlobalLevel(level)
 	servers := getServers(*typeFlag)
 	bestIndex := selectBestServerIndex(servers, *countryFlag)
+	if bestIndex == -1 {
+		log.Fatal().Str("country", *countryFlag).Msg("No servers for country found.")
+	}
 	best := servers[bestIndex]
 	log.Debug().Interface("server", best).Msg("Best latency server found.")
 	hostname := strings.TrimSuffix(best.Hostname, "-wireguard")
