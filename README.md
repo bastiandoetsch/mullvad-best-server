@@ -17,6 +17,8 @@ Execute `mullvad-best-server`. It outputs the code, e.g. `de05`. You can then co
 Usage of dist/mullvad-best-server_darwin_amd64/mullvad-best-server:
 -c string
   Server country code, e.g. ch for Switzerland (default "ch")
+-l string
+  Log level. Allowed values: trace, debug, info, warn, error, fatal, panic (default "info")
 -o string
   Output format. 'json' outputs server json
 -t string
