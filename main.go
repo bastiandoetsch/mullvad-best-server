@@ -40,7 +40,7 @@ func main() {
 	} else {
 		serverJson, err := json.Marshal(best)
 		if err != nil {
-			log.Fatal().Err(err)
+			log.Fatal().Err(err).Msg("Couldn't marshal server information to Json")
 		}
 		fmt.Println(string(serverJson))
 	}
@@ -66,7 +66,7 @@ func selectBestServerIndex(servers []server, country string) int {
 func getServers(serverType string) []server {
 	resp, err := http.Get("https://api.mullvad.net/www/relays/" + serverType + "/")
 	if err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Msg("Couldn't retrieve servers")
 	}
 	responseBody, err := ioutil.ReadAll(resp.Body)
 	defer func(Body io.ReadCloser) {
@@ -81,7 +81,7 @@ func getServers(serverType string) []server {
 	var servers []server
 	err = json.Unmarshal(responseBody, &servers)
 	if err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Msg("couldn't unmarshall server json")
 	}
 	return servers
 }

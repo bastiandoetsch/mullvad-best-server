@@ -30,7 +30,7 @@ The `-c` flag allows to give a country code. Else `ch` will be used.
 
 
 ## Background
-The program uses `https://api.mullvad.net/www/relays/<SERVER_TYPE/` to get the current server list, pings the ones with the right country
+The program uses `https://api.mullvad.net/www/relays/<SERVER_TYPE>/` to get the current server list, pings the ones with the right country
 and outputs the server with the lowest ping.
 
 ## Integration into a script
