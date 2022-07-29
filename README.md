@@ -1,7 +1,12 @@
 # mullvad-best-server
 ![Build](https://github.com/bastiandoetsch/mullvad-best-server/actions/workflows/go.yml/badge.svg)
 
-Determines the mullvad.net server with the lowest latency. 
+Determines the mullvad.net server with the lowest latency on macOS and Linux. On Windows, it can only check if the server is up.
+The reason lies with the golang network libraries, according to the `go-ping` library, that is used under the hood for pinging: 
+
+```
+Please note that accessing packet TTL values is not supported due to limitations in the Go x/net/ipv4 and x/net/ipv6 packages.
+```
 
 ## Installation
 
