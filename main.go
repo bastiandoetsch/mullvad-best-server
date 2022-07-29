@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"runtime"
 	"strings"
 	"time"
 
@@ -57,6 +58,8 @@ func selectBestServerIndex(servers []server, country string) int {
 					bestIndex = i
 					bestPing = duration
 				}
+			} else {
+				log.Err(err).Msg("Error determining the server latency via ping.")
 			}
 		}
 	}
@@ -86,8 +89,12 @@ func getServers(serverType string) []server {
 	return servers
 }
 
+//goland:noinspection GoBoolExpressions
 func serverLatency(s server) (time.Duration, error) {
 	pinger, err := ping.NewPinger(s.Ipv4AddrIn)
+	if runtime.GOOS == "windows" {
+		pinger.SetPrivileged(true)
+	}
 	pinger.Count = 1
 	if err != nil {
 		return 0, err
