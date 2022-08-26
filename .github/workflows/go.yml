@@ -36,7 +36,7 @@ jobs:
         git add licenses
         git commit -m "Updated licenses"
         git push
-        git clean && git reset --hard
+        git clean -f && git reset --hard
 
     - name: Create release tag
       run: |
