@@ -33,10 +33,9 @@ jobs:
       run: |
         go install github.com/google/go-licenses@latest
         rm -rf licenses
-        go-licenses save . --save_path="licenses"
+        go-licenses save . --save_path="licenses" --ignore "github.com/bastiandoetsch/mullvad-best-server"
         git add licenses
-        git commit -m "Updated licenses"
-        git push
+        git commit -m "Updated licenses" && git push || echo "No changes to commit"
         git clean -f && git reset --hard
 
     - name: Create release tag
