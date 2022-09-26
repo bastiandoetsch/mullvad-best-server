@@ -49,3 +49,6 @@ chmod +x /root/mullvad-best-server
 /usr/bin/wg-quick down $(wg show|grep interface | cut -d: -f2)  || echo "nothing to shut down"
 /usr/bin/wg-quick up "mullvad-$(/root/mullvad-best-server -c de)"
 ```
+
+## Troubleshooting
+You may have to update your `/usr/bin/wg-quick` script for the new mullvad servers, as they have names longer than 15 chars. Replace `[[ $CONFIG_FILE =~ ^[a-zA-Z0-9_=+.-]{1,15} ]]$` with `[[ $CONFIG_FILE =~ ^[a-zA-Z0-9_=+.-]{1,25}$ ]]` and `[[ $CONFIG_FILE =~ (^|/)([a-zA-Z0-9_=+.-]{1,15})\.conf$ ]]` with `[[ $CONFIG_FILE =~ (^|/)([a-zA-Z0-9_=+.-]{1,25})\.conf$ ]]`
