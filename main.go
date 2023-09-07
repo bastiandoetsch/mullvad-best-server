@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"runtime"
 	"strings"
@@ -21,6 +20,7 @@ func main() {
 	var countryFlag = flag.String("c", "ch", "Server country code, e.g. ch for Switzerland")
 	var typeFlag = flag.String("t", "wireguard", "Server type, e.g. wireguard")
 	var logLevel = flag.String("l", "info", "Log level. Allowed values: trace, debug, info, warn, error, fatal, panic")
+	var timeout = flag.Duration("timeout", time.Second*5, "Timeout for network calls as duration, e.g. 60s")
 	flag.Parse()
 
 	level, err := zerolog.ParseLevel(*logLevel)
@@ -28,7 +28,7 @@ func main() {
 		log.Fatal().Err(err).Msg("Unable to set log level")
 	}
 	zerolog.SetGlobalLevel(level)
-	servers := getServers(*typeFlag)
+	servers := getServers(*typeFlag, *timeout)
 	bestIndex := selectBestServerIndex(servers, *countryFlag)
 	if bestIndex == -1 {
 		log.Fatal().Str("country", *countryFlag).Msg("No servers for country found.")
@@ -66,12 +66,14 @@ func selectBestServerIndex(servers []server, country string) int {
 	return bestIndex
 }
 
-func getServers(serverType string) []server {
-	resp, err := http.Get("https://api.mullvad.net/www/relays/" + serverType + "/")
+func getServers(serverType string, timeout time.Duration) []server {
+	client := http.DefaultClient
+	client.Timeout = timeout
+	resp, err := client.Get("https://api.mullvad.net/www/relays/" + serverType + "/")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Couldn't retrieve servers")
 	}
-	responseBody, err := ioutil.ReadAll(resp.Body)
+	responseBody, err := io.ReadAll(resp.Body)
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -96,6 +98,7 @@ func serverLatency(s server) (time.Duration, error) {
 		pinger.SetPrivileged(true)
 	}
 	pinger.Count = 1
+	pinger.Timeout = time.Millisecond * 100
 	if err != nil {
 		return 0, err
 	}
