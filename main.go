@@ -21,6 +21,7 @@ func main() {
 	var typeFlag = flag.String("t", "wireguard", "Server type, e.g. wireguard")
 	var logLevel = flag.String("l", "info", "Log level. Allowed values: trace, debug, info, warn, error, fatal, panic")
 	var timeout = flag.Duration("timeout", time.Second*5, "Timeout for network calls as duration, e.g. 60s")
+	var provider = flag.String("p", "", "filter by provider, e.g. 31173 for mullvad-owned")
 	flag.Parse()
 
 	level, err := zerolog.ParseLevel(*logLevel)
@@ -29,7 +30,7 @@ func main() {
 	}
 	zerolog.SetGlobalLevel(level)
 	servers := getServers(*typeFlag, *timeout)
-	bestIndex := selectBestServerIndex(servers, *countryFlag)
+	bestIndex := selectBestServerIndex(servers, *countryFlag, *provider)
 	if bestIndex == -1 {
 		log.Fatal().Str("country", *countryFlag).Msg("No servers for country found.")
 	}
@@ -47,11 +48,11 @@ func main() {
 	}
 }
 
-func selectBestServerIndex(servers []server, country string) int {
+func selectBestServerIndex(servers []server, country string, provider string) int {
 	bestIndex := -1
 	var bestPing time.Duration
 	for i, server := range servers {
-		if server.Active && server.CountryCode == country {
+		if server.Active && server.CountryCode == country && provider == "" || server.Provider == provider {
 			duration, err := serverLatency(server)
 			if err == nil {
 				if bestIndex == -1 || bestPing > duration {
