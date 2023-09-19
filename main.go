@@ -52,7 +52,7 @@ func selectBestServerIndex(servers []server, country string, provider string) in
 	bestIndex := -1
 	var bestPing time.Duration
 	for i, server := range servers {
-		if server.Active && server.CountryCode == country && provider == "" || server.Provider == provider {
+		if server.Active && server.CountryCode == country && (provider == "" || server.Provider == provider) {
 			duration, err := serverLatency(server)
 			if err == nil {
 				if bestIndex == -1 || bestPing > duration {
