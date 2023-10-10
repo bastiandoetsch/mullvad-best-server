@@ -19,15 +19,19 @@ Execute `mullvad-best-server`. It outputs the code, e.g. `de05`. You can then co
 ### Command line parameters
 
 ```angular2html
-Usage of dist/mullvad-best-server_darwin_amd64/mullvad-best-server:
--c string
-  Server country code, e.g. ch for Switzerland (default "ch")
--l string
-  Log level. Allowed values: trace, debug, info, warn, error, fatal, panic (default "info")
--o string
-  Output format. 'json' outputs server json
--t string
-  Server type, e.g. wireguard (default "wireguard")
+Usage of ./mullvad-best-server:
+  -c string
+    	Server country code, e.g. ch for Switzerland (default "ch")
+  -l string
+    	Log level. Allowed values: trace, debug, info, warn, error, fatal, panic (default "info")
+  -o string
+    	Output format. 'json' outputs server json
+  -p string
+    	filter by provider, e.g. 31173 for mullvad-owned
+  -t string
+    	Server type, e.g. wireguard (default "wireguard")
+  -timeout duration
+    	Timeout for network calls as duration, e.g. 60s (default 5s)
 ```
 
 If you want the full server information, execute `mullvad-best-server -o json`. It returns the full json output  of the server information.
